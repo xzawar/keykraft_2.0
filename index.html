@@ -37,12 +37,13 @@
 </nav>
 
 <!-- HERO -->
-<section class="hero">
-  <div class="hero-bg">
+<section class="hero" style="position:relative;">
+<div id="antigravity-canvas" style="position:absolute;inset:0;z-index:0;pointer-events:none;"></div>
+  <div class="hero-bg" style="z-index:1;position:relative;">
     <div class="hero-grid"></div>
     <div class="hero-glow"></div>
   </div>
-  <div class="hero-content">
+  <div class="hero-content" style="position:relative;z-index:2;">
     <div class="hero-badge reveal">Digital Transformation Experts</div>
     <h1 class="hero-title reveal">
       Unlock Your<br><em>Digital Potential</em><br>With Integrated<br>IT Solutions
@@ -55,7 +56,7 @@
       <a href="contact.html" class="btn btn-ghost">Schedule Consultation →</a>
     </div>
   </div>
-  <div class="hero-stats reveal">
+  <div class="hero-stats" style="position:relative;z-index:2;"  reveal">
     <div class="stat-item"><span class="stat-num" data-target="12">0</span><span class="stat-label">Specialized Services</span></div>
     <div class="stat-item"><span class="stat-num" data-target="427">0</span><span class="stat-label">Clients Empowered</span></div>
     <div class="stat-item"><span class="stat-num" data-target="24">0</span><span class="stat-label">/ 7 Global Support</span></div>
@@ -206,6 +207,8 @@
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="antigravity.js"></script>
 <script src="main.js"></script>
 </body>
 </html>

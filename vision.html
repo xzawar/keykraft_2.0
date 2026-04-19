@@ -29,8 +29,9 @@
   </div>
 </nav>
 
-<section class="page-hero">
-  <div class="page-hero-bg"></div>
+<section class="page-hero" style="position:relative;">
+<div id="antigravity-canvas" style="position:absolute;inset:0;z-index:0;pointer-events:none;"></div>
+  <div class="page-hero-bg" style="z-index:1;"></div>
   <div class="section-label reveal">Strategic Framework</div>
   <h1 class="reveal">Our <em style="font-family:'DM Serif Display',serif;font-style:italic;color:var(--accent)">Vision</em></h1>
   <p class="reveal">Driving digital excellence through integrated solutions, measurable outcomes, and a commitment to unlocking the full potential of every business we serve.</p>
@@ -212,6 +213,8 @@
   </div>
   <div class="footer-bottom container"><p>© 2023 Keykraft Revenue Group. All rights reserved.</p><div><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></div></div>
 </footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="antigravity.js"></script>
 <script src="main.js"></script>
 </body>
 </html>

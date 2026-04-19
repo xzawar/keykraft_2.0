@@ -91,3 +91,26 @@ if (form) {
     }, 1400);
   });
 }
+
+// ===== ANTIGRAVITY INIT =====
+document.addEventListener('DOMContentLoaded', function () {
+  var el = document.getElementById('antigravity-canvas');
+  if (el && typeof Antigravity !== 'undefined') {
+    new Antigravity(el, {
+      count: 300,
+      magnetRadius: 6,
+      ringRadius: 7,
+      waveSpeed: 0.4,
+      waveAmplitude: 1,
+      particleSize: 1.5,
+      lerpSpeed: 0.05,
+      color: '#c8ff00',
+      autoAnimate: true,
+      particleVariance: 1,
+      rotationSpeed: 0,
+      depthFactor: 1,
+      pulseSpeed: 3,
+      fieldStrength: 10
+    });
+  }
+});
