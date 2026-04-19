@@ -89,7 +89,8 @@
     }, { passive: false });
 
     // ── Geometry & Material ───────────────────────────────────
-    const geo = new THREE.CapsuleGeometry(0.1, 0.4, 4, 8);
+    // CapsuleGeometry added in r142 — use CylinderGeometry as equivalent for r128
+    const geo = new THREE.CylinderGeometry(0.1, 0.1, 0.5, 8);
     const mat = new THREE.MeshBasicMaterial({ color: opts.color });
     const mesh = new THREE.InstancedMesh(geo, mat, opts.count);
     scene.add(mesh);
