@@ -1227,3 +1227,8 @@ footer {
   .cta-bg-text { display: none; }
   .footer-links { grid-template-columns: 1fr; }
 }
+
+/* Ensure all page-hero children sit above blur overlay */
+.page-hero > *:not(.page-hero-bg) { position: relative; z-index: 3; }
+.hero-content, .hero-stats { z-index: 3 !important; }
+
