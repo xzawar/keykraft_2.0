@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
       waveSpeed: 0.4,
       waveAmplitude: 1,
       particleSize: 1.5,
-      lerpSpeed: 0.05,
+      lerpSpeed: 0.15,
       color: '#c8ff00',
       autoAnimate: true,
       particleVariance: 1,

@@ -16,7 +16,7 @@
       waveSpeed: 0.4,
       waveAmplitude: 1,
       particleSize: 1.5,
-      lerpSpeed: 0.05,
+      lerpSpeed: 0.15,
       color: '#c8ff00',
       autoAnimate: true,
       particleVariance: 1,
@@ -132,8 +132,8 @@
         destY = Math.cos(elapsed) * (h / 4);
       }
 
-      virtualMouse.x += (destX - virtualMouse.x) * 0.05;
-      virtualMouse.y += (destY - virtualMouse.y) * 0.05;
+      virtualMouse.x += (destX - virtualMouse.x) * 0.3;
+      virtualMouse.y += (destY - virtualMouse.y) * 0.3;
 
       const targetX = virtualMouse.x;
       const targetY = virtualMouse.y;
