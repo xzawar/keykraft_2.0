@@ -1,7 +1,6 @@
 /**
  * Antigravity Particle Effect — Vanilla Three.js port
- * Matches the React Bits component behaviour without a build step.
- * Usage: new Antigravity(containerEl, options)
+ * Uses window-level mouse tracking so pointer-events:none doesn't block it.
  */
 (function (global) {
   'use strict';
@@ -30,6 +29,10 @@
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0x000000, 0);
+    renderer.domElement.style.position = 'absolute';
+    renderer.domElement.style.inset = '0';
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
     container.appendChild(renderer.domElement);
 
     // ── Scene / Camera ────────────────────────────────────────
@@ -49,9 +52,8 @@
     const ro = new ResizeObserver(resize);
     ro.observe(container);
 
-    // ── Viewport helpers ──────────────────────────────────────
+    // ── Viewport world-space size at z=0 ─────────────────────
     function vpWidth() {
-      const h = container.clientHeight;
       const fovRad = (camera.fov * Math.PI) / 180;
       return 2 * Math.tan(fovRad / 2) * camera.position.z * camera.aspect;
     }
@@ -60,37 +62,31 @@
       return 2 * Math.tan(fovRad / 2) * camera.position.z;
     }
 
-    // ── Mouse tracking ────────────────────────────────────────
-    const mouse = { nx: 0, ny: 0 }; // normalised -1..1
-    const lastMove = { time: 0, x: 0, y: 0 };
+    // ── Mouse tracking on WINDOW so pointer-events:none doesn't block ──
+    const mouse = { nx: 0, ny: 0 };
+    const lastMove = { time: 0 };
     const virtualMouse = { x: 0, y: 0 };
 
-    container.addEventListener('mousemove', e => {
+    function onMouseMove(e) {
       const rect = container.getBoundingClientRect();
-      mouse.nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.ny = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-      const dx = mouse.nx - lastMove.x;
-      const dy = mouse.ny - lastMove.y;
-      if (Math.sqrt(dx * dx + dy * dy) > 0.001) {
-        lastMove.time = Date.now();
-        lastMove.x = mouse.nx;
-        lastMove.y = mouse.ny;
-      }
-    });
+      mouse.nx = ((e.clientX - rect.left) / rect.width)  * 2 - 1;
+      mouse.ny = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
+      lastMove.time = Date.now();
+    }
 
-    // Touch support
-    container.addEventListener('touchmove', e => {
-      e.preventDefault();
+    function onTouchMove(e) {
       const touch = e.touches[0];
       const rect = container.getBoundingClientRect();
-      mouse.nx = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.ny = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+      mouse.nx = ((touch.clientX - rect.left) / rect.width)  * 2 - 1;
+      mouse.ny = -((touch.clientY - rect.top)  / rect.height) * 2 + 1;
       lastMove.time = Date.now();
-    }, { passive: false });
+    }
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
 
     // ── Geometry & Material ───────────────────────────────────
-    // CapsuleGeometry added in r142 — use CylinderGeometry as equivalent for r128
-    const geo = new THREE.CylinderGeometry(0.1, 0.1, 0.5, 8);
+    const geo = new THREE.CylinderGeometry(0.08, 0.08, 0.45, 8);
     const mat = new THREE.MeshBasicMaterial({ color: opts.color });
     const mesh = new THREE.InstancedMesh(geo, mat, opts.count);
     scene.add(mesh);
@@ -99,11 +95,11 @@
 
     // ── Particles ─────────────────────────────────────────────
     const particles = [];
+    const w0 = vpWidth();
+    const h0 = vpHeight();
     for (let i = 0; i < opts.count; i++) {
-      const w = vpWidth();
-      const h = vpHeight();
-      const x = (Math.random() - 0.5) * w;
-      const y = (Math.random() - 0.5) * h;
+      const x = (Math.random() - 0.5) * w0;
+      const y = (Math.random() - 0.5) * h0;
       const z = (Math.random() - 0.5) * 20;
       particles.push({
         t: Math.random() * 100,
@@ -124,12 +120,13 @@
       const w = vpWidth();
       const h = vpHeight();
 
-      let destX = (mouse.nx * w) / 2;
-      let destY = (mouse.ny * h) / 2;
+      // Convert normalised -1..1 to world-space units
+      let destX = mouse.nx * (w / 2);
+      let destY = mouse.ny * (h / 2);
 
       if (opts.autoAnimate && Date.now() - lastMove.time > 2000) {
         destX = Math.sin(elapsed * 0.5) * (w / 4);
-        destY = Math.cos(elapsed) * (h / 4);
+        destY = Math.cos(elapsed * 0.7) * (h / 4);
       }
 
       virtualMouse.x += (destX - virtualMouse.x) * 0.3;
@@ -191,6 +188,8 @@
     this.destroy = function () {
       cancelAnimationFrame(rafId);
       ro.disconnect();
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('touchmove', onTouchMove);
       renderer.dispose();
       if (renderer.domElement.parentNode) {
         renderer.domElement.parentNode.removeChild(renderer.domElement);
